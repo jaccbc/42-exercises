@@ -70,7 +70,7 @@ static void handleMessage(int fd) {
         disconnect(fd);
         return ;
     }
-    int len = strlen(clt[fd].msg)
+    int len = strlen(clt[fd].msg);
     for (int i = 0; i < r; i++,  len++) {
         clt[fd].msg[len] = readBuffer[i];
         if (clt[fd].msg[len] == '\n') {

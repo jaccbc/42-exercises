@@ -8,13 +8,13 @@
 
 struct client {
     int id;
-    char msg[4096];
+    char msg[200000];
 };
 
 struct client clt[1024] = {0};
 fd_set fds, read_fds, write_fds;
 int max = 0, next = 0;
-char readBuffer[8192] = {0}, writeBuffer[8192] = {0};
+char readBuffer[300000] = {0}, writeBuffer[300000] = {0};
 
 static void closeServer() {
     write(STDERR_FILENO, "Fatal error\n", 12);
@@ -61,7 +61,7 @@ static void disconnect(int fd) {
     broadcast(fd);
     FD_CLR(fd, &fds);
     close(fd);
-    bzero(clt[fd].msg, sizeof(clt[fd].msg));
+    clt[fd].msg[0] = '\0';
 }
 
 static void handleMessage(int fd) {
@@ -70,16 +70,18 @@ static void handleMessage(int fd) {
         disconnect(fd);
         return ;
     }
-    for (int i = 0, len = strlen(clt[fd].msg); i < r; i++,  len++) {
+    int len = strlen(clt[fd].msg)
+    for (int i = 0; i < r; i++,  len++) {
         clt[fd].msg[len] = readBuffer[i];
         if (clt[fd].msg[len] == '\n') {
             clt[fd].msg[len] = '\0';
             sprintf(writeBuffer, "client %d: %s\n", clt[fd].id, clt[fd].msg);
             broadcast(fd);
-            bzero(clt[fd].msg, sizeof(clt[fd].msg));
+            clt[fd].msg[0] = '\0';
             len = -1;
         }
     }
+    clt[fd].msg[len] = '\0';
 }
 
 int main(int argc, char** argv) {

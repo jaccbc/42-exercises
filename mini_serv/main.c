@@ -30,7 +30,7 @@ static int initServer(int port) {
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = 16777343;
     addr.sin_port = ((port & 0xFF) << 8 | port >> 8);
-    if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0 || listen(fd, SOMAXCONN) < 0)
+    if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0 || listen(fd, 100) < 0)
         closeServer();
     return fd;
 }
